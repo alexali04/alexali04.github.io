@@ -31,7 +31,6 @@ github_username:  alexali04
 theme: minima
 plugins:
   - jekyll-feed
-  - "jekyll-github-metadata"
 
 # Exclude from processing.
 # The following items will not be processed, by default.
