@@ -5,15 +5,15 @@ date:   2024-11-22 00:07:44 -0500
 categories: jekyll update
 ---
 
-# 1. **Introduction**
+## 1. **Introduction**
 ___
 Things are nice when they're simple. As far as curves go, linear is about as nice as it gets.
 
 
-I present to you a rough anthology of linear regression. By this, I mean several different approaches to linear regression. There are several computational tricks / alternative derivations
+I present to you a rough anthology of linear regression. By this, I mean several different approaches to linear regression. There are several computational tricks / alternative derivations which are shorter and easier. I'll go through some of them at the end of the article but it's probably valuable to do it the painful way at least once. 
 
 
-# 2. **Problem Set up**
+## 2. **Problem Set up**
 ___
 
 We begin with a dataset $\mathcal{D} = \{(x_i, y_i)\}_{i= 1}^n$. Let $y \in \mathbb{R}, x \in \mathbb{R}^d$. We want to find a linear relationship between features $x_i$ and noisy target values $y_i$, i.e.:
@@ -38,7 +38,7 @@ $$
 
 Note that this represents $y$ as a column vector. 
 
-# 3. **Minimize MSE**
+## 3. **Minimize MSE**
 ___
 
 The residual (error between $Xw$ and $y$) is defined as:
@@ -75,7 +75,7 @@ $$
 \frac{\partial}{\partial x} x^T A x = x^T (A + A^T)
 $$
 
-### **3.1 Gradient is a Row Vector**
+# **3.1 Gradient is a Row Vector**
 ___
 
 The first term ($y^T y$) is not dependent on $w$ so it goes to zero. The second term becomes $2 w^T X^T X$. The third term becomes $2 y^T X$. So we have:
@@ -98,7 +98,7 @@ $$
 
 If a symmetric matrix is non-singular (read: invertible), it's inverse is also symmetric. 
 
-### **3.2 Gradient is a Column Vector**
+# **3.2 Gradient is a Column Vector**
 ___
 
 The second term becomes $2 X^T X w$ and the third becomes $2 X^T y$. 
@@ -128,7 +128,7 @@ There are many reasons why MSE is a empirically nice loss function to use. It's 
 
 I find it everything fits much nicer in my head when we don't need to choose an arbitrary loss function but are forced into it by the assumptions we make. We'll now do linear regression probabilistically. 
 
-# 4. **Maximum Likelihood Estimation**
+## 4. **Maximum Likelihood Estimation**
 ___
 
 Let's begin by placing a distribution over the noise. Say, for example, we choose $\epsilon_x \sim \mathcal{N}(0, \sigma^2)$. So we have:
@@ -226,13 +226,13 @@ $$
 
 This is a little better - its nice to be able to estimate the variance of the noise as well. 
 
-### 4.1 **Issues with MLE**
+# 4.1 **Issues with MLE**
 ___
 
 There are several issues with maximum likelihood estimation. But the most glaring one, to me at least, is that it fundamentally answers the wrong question. We don't really care about the probability of observing the data given some parameter setting. We care about the probability of some parameter setting given the data.  
 
 
-# 5 **MAP**
+## 5 **MAP**
 ___
 
 One way to do this is with **MAP** or **Maximum a Posteriori** estimation. 
