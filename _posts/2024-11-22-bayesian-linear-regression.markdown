@@ -75,7 +75,8 @@ $$
 \frac{\partial}{\partial x} x^T A x = x^T (A + A^T)
 $$
 
-## 3.1 Gradient is a Row Vector
+## **3.1 Gradient is a Row Vector**
+___
 
 The first term ($y^T y$) is not dependent on $w$ so it goes to zero. The second term becomes $2 w^T X^T X$. The third term becomes $2 y^T X$. So we have:
 
@@ -97,7 +98,8 @@ $$
 
 If a symmetric matrix is non-singular (read: invertible), it's inverse is also symmetric. 
 
-## 3.2 Gradient is a Column Vector
+## **3.2 Gradient is a Column Vector**
+___
 
 The second term becomes $2 X^T X w$ and the third becomes $2 X^T y$. 
 
@@ -225,11 +227,13 @@ $$
 This is a little better - its nice to be able to estimate the variance of the noise as well. 
 
 ## 4.1 **Issues with MLE**
+___
 
 There are several issues with maximum likelihood estimation. But the most glaring one, to me at least, is that it fundamentally answers the wrong question. We don't really care about the probability of observing the data given some parameter setting. We care about the probability of some parameter setting given the data.  
 
 
-# 5.0 MAP
+# 5 **MAP**
+___
 
 One way to do this is with **MAP** or **Maximum a Posteriori** estimation. 
 
@@ -288,8 +292,6 @@ $$
 $$
 
 We've performed bits and pieces of this derivative above. So we get
-
-
 
 $$
 0 = \frac{X^T y}{\sigma^2} - \frac{w}{\alpha^2} - \frac{X^T X w}{\sigma^2}
