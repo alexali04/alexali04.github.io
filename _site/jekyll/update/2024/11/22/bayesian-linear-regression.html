@@ -7,8 +7,8 @@
 <meta name="generator" content="Jekyll v4.3.4" />
 <meta property="og:title" content="An Anthology for Bayesian Linear Regresion" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="1. Introduction Things are nice when they’re simple. As far as curves go, linear is about as nice as it gets." />
-<meta property="og:description" content="1. Introduction Things are nice when they’re simple. As far as curves go, linear is about as nice as it gets." />
+<meta name="description" content="1. Introduction Things are easy when they’re simple. As far as curves go, linear curves are about as nice as it gets." />
+<meta property="og:description" content="1. Introduction Things are easy when they’re simple. As far as curves go, linear curves are about as nice as it gets." />
 <link rel="canonical" href="http://localhost:4000/jekyll/update/2024/11/22/bayesian-linear-regression.html" />
 <meta property="og:url" content="http://localhost:4000/jekyll/update/2024/11/22/bayesian-linear-regression.html" />
 <meta property="og:site_name" content="Alex’s Blog" />
@@ -17,7 +17,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="An Anthology for Bayesian Linear Regresion" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2024-11-22T00:07:44-05:00","datePublished":"2024-11-22T00:07:44-05:00","description":"1. Introduction Things are nice when they’re simple. As far as curves go, linear is about as nice as it gets.","headline":"An Anthology for Bayesian Linear Regresion","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/jekyll/update/2024/11/22/bayesian-linear-regression.html"},"url":"http://localhost:4000/jekyll/update/2024/11/22/bayesian-linear-regression.html"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2024-11-22T00:07:44-05:00","datePublished":"2024-11-22T00:07:44-05:00","description":"1. Introduction Things are easy when they’re simple. As far as curves go, linear curves are about as nice as it gets.","headline":"An Anthology for Bayesian Linear Regresion","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/jekyll/update/2024/11/22/bayesian-linear-regression.html"},"url":"http://localhost:4000/jekyll/update/2024/11/22/bayesian-linear-regression.html"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Alex&apos;s Blog" /></head>
 <body><header class="site-header" role="banner">
@@ -49,9 +49,9 @@
   <div class="post-content e-content" itemprop="articleBody">
     <h1 id="1-introduction">1. <strong>Introduction</strong></h1>
 <hr />
-<p>Things are nice when they’re simple. As far as curves go, linear is about as nice as it gets.</p>
+<p>Things are easy when they’re simple. As far as curves go, linear curves are about as nice as it gets.</p>
 
-<p>I present to you a rough anthology of linear regression. By this, I mean several different approaches to linear regression. There are several computational tricks / alternative derivations</p>
+<p>I present to you a rough anthology of linear regression. By this, I mean several different approaches to linear regression. There are several computational tricks / alternative derivations which are shorter and easier. I’ll go through some of them at the end of the article but it’s probably valuable to do it the painful way at least once.</p>
 
 <h1 id="2-problem-set-up">2. <strong>Problem Set up</strong></h1>
 <hr />
@@ -63,6 +63,8 @@
 <p>If we believe the underlying relationship between $y$ and $x$ is in fact linear, we set</p>
 
 \[f(x_i) = w^T x_i\]
+
+<p>where $w$ represents the weights or scaling coefficients.</p>
 
 <p>We can collect the target values $y_1, \dots, y_n$ into a vector and the feature vectors $x_1, \dots, x_N$ into a <strong>design matrix</strong> $X$ where the row $X_i = x_i$. This ensures each $y_i = x_i^T w$.</p>
 
@@ -87,7 +89,7 @@
 
 \[= \frac{\partial}{\partial w} (y^T y + w^T X^T X w - 2 w^T X^T y)\]
 
-<p>There are two ways to treat matrix derivatives. Numerator layout (treating the gradient as row vector) and denominator layout (treating the gradient as a column vector). Both will work.</p>
+<p>There are two ways to treat matrix derivatives. Numerator layout (treating the gradient as row vector) and denominator layout (treating the gradient as a column vector). This actually caused me great grief when I was learning this on my own but I’ve kinda gotten over it. So both views are presented here.</p>
 
 <p>Here are the rules we will use (treating the gradient as a row vector). To treat the gradient as a column vector, take the transpose.</p>
 
@@ -95,7 +97,10 @@
 
 \[\frac{\partial}{\partial x} x^T A x = x^T (A + A^T)\]
 
-<h2 id="31-gradient-is-a-row-vector">3.1 Gradient is a Row Vector</h2>
+<p>To verify these rules for yourself, you can just convert these matrix-vector products into sums.</p>
+
+<h4 id="31-gradient-is-a-row-vector">3.1 <strong>Gradient is a Row Vector</strong></h4>
+<hr />
 
 <p>The first term ($y^T y$) is not dependent on $w$ so it goes to zero. The second term becomes $2 w^T X^T X$. The third term becomes $2 y^T X$. So we have:</p>
 
@@ -107,9 +112,10 @@
 
 \[w = (X^T X)^{-1} X^T y\]
 
-<p>If a symmetric matrix is non-singular (read: invertible), it’s inverse is also symmetric.</p>
+<p>If a symmetric matrix is non-singular, it’s inverse is also symmetric.</p>
 
-<h2 id="32-gradient-is-a-column-vector">3.2 Gradient is a Column Vector</h2>
+<h4 id="32-gradient-is-a-column-vector">3.2 <strong>Gradient is a Column Vector</strong></h4>
+<hr />
 
 <p>The second term becomes $2 X^T X w$ and the third becomes $2 X^T y$.</p>
 
@@ -144,7 +150,7 @@
 
 \[\mathcal{L}(w \mid \mathcal{D}) = p(\mathcal{D} \mid w)\]
 
-<p>We want to maximize the likelihood of observing the data. Our data points $y_i$ are i.i.d. since they’re all drawn from $\mathcal{N}(w^T x_i, \sigma^2)$ (identical) and are conditionally independent on the mean and variance. So we have:</p>
+<p>We want to maximize the likelihood of observing the data (what does this mean?). Our data points $y_i$ are i.i.d. since they’re all drawn from $\mathcal{N}(w^T x_i, \sigma^2)$ (identical) and are conditionally independent on the mean and variance. So we have:</p>
 
 \[p(\mathcal{D} \mid w) = p(y_1, \dots, y_N \mid w, x_1, \dots, x_n, \sigma^2)\]
 
@@ -192,11 +198,13 @@
 
 <p>This is a little better - its nice to be able to estimate the variance of the noise as well.</p>
 
-<h2 id="41-issues-with-mle">4.1 <strong>Issues with MLE</strong></h2>
+<h4 id="41-issues-with-mle">4.1 <strong>Issues with MLE</strong></h4>
+<hr />
 
 <p>There are several issues with maximum likelihood estimation. But the most glaring one, to me at least, is that it fundamentally answers the wrong question. We don’t really care about the probability of observing the data given some parameter setting. We care about the probability of some parameter setting given the data.</p>
 
-<h1 id="50-map">5.0 MAP</h1>
+<h1 id="5-map">5. <strong>MAP</strong></h1>
+<hr />
 
 <p>One way to do this is with <strong>MAP</strong> or <strong>Maximum a Posteriori</strong> estimation.</p>
 
@@ -268,6 +276,17 @@
 
 <p>If we send the prior variance of the weight to $0$, i.e. $\alpha^2 \to 0$, then the regularization coefficient $\lambda$ grows very large so the weights move towards $0$. Similarly, if we send the noise variance $ \sigma^2 \to \infty$, we’ll see a similar result.</p>
 
+<h1 id="6-bayesian-linear-regression">6. <strong>Bayesian Linear Regression</strong></h1>
+
+<h4 id="61-marginal-likelihood">6.1 <strong>Marginal Likelihood</strong></h4>
+
+<h4 id="62-posterior-distribution">6.2 <strong>Posterior Distribution</strong></h4>
+
+<h1 id="7-additional-notes">7. Additional Notes</h1>
+
+<p>I was initially confused by the notion of likelihood. What does the likelihood term $p(\mathcal{D} \mid w)$, the “probability of observing the data” even mean?</p>
+
+<p>We assume that the data was generated as part of a causal process paramaterized by $w$. The likelihood of the data is the probability that the parameter setting $w$ generated the data.</p>
 
   </div><a class="u-url" href="/jekyll/update/2024/11/22/bayesian-linear-regression.html" hidden></a>
 </article>

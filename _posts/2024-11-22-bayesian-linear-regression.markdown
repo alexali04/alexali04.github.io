@@ -7,8 +7,7 @@ categories: jekyll update
 
 # 1. **Introduction**
 ___
-Things are nice when they're simple. As far as curves go, linear is about as nice as it gets.
-
+Things are easy when they're simple. As far as curves go, linear curves are about as nice as it gets.
 
 I present to you a rough anthology of linear regression. By this, I mean several different approaches to linear regression. There are several computational tricks / alternative derivations which are shorter and easier. I'll go through some of them at the end of the article but it's probably valuable to do it the painful way at least once. 
 
@@ -28,7 +27,7 @@ $$
 f(x_i) = w^T x_i
 $$
 
-
+where $w$ represents the weights or scaling coefficients. 
 
 We can collect the target values $y_1, \dots, y_n$ into a vector and the feature vectors $x_1, \dots, x_N$ into a **design matrix** $X$ where the row $X_i = x_i$. This ensures each $y_i = x_i^T w$. 
 
@@ -63,7 +62,7 @@ $$
  = \frac{\partial}{\partial w} (y^T y + w^T X^T X w - 2 w^T X^T y)
 $$
 
-There are two ways to treat matrix derivatives. Numerator layout (treating the gradient as row vector) and denominator layout (treating the gradient as a column vector). Both will work.
+There are two ways to treat matrix derivatives. Numerator layout (treating the gradient as row vector) and denominator layout (treating the gradient as a column vector). This actually caused me great grief when I was learning this on my own but I've kinda gotten over it. So both views are presented here. 
 
 Here are the rules we will use (treating the gradient as a row vector). To treat the gradient as a column vector, take the transpose. 
 
@@ -75,7 +74,9 @@ $$
 \frac{\partial}{\partial x} x^T A x = x^T (A + A^T)
 $$
 
-## 3.1 **Gradient is a Row Vector**
+To verify these rules for yourself, you can just convert these matrix-vector products into sums. 
+
+#### 3.1 **Gradient is a Row Vector**
 ___
 
 The first term ($y^T y$) is not dependent on $w$ so it goes to zero. The second term becomes $2 w^T X^T X$. The third term becomes $2 y^T X$. So we have:
@@ -96,9 +97,9 @@ $$
 w = (X^T X)^{-1} X^T y
 $$
 
-If a symmetric matrix is non-singular (read: invertible), it's inverse is also symmetric. 
+If a symmetric matrix is non-singular, it's inverse is also symmetric. 
 
-## 3.2 *Gradient is a Column Vector**
+#### 3.2 **Gradient is a Column Vector**
 ___
 
 The second term becomes $2 X^T X w$ and the third becomes $2 X^T y$. 
@@ -147,7 +148,7 @@ $$
 \mathcal{L}(w \mid \mathcal{D}) = p(\mathcal{D} \mid w)
 $$
 
-We want to maximize the likelihood of observing the data. Our data points $y_i$ are i.i.d. since they're all drawn from $\mathcal{N}(w^T x_i, \sigma^2)$ (identical) and are conditionally independent on the mean and variance. So we have:
+We want to maximize the likelihood of observing the data (what does this mean?). Our data points $y_i$ are i.i.d. since they're all drawn from $\mathcal{N}(w^T x_i, \sigma^2)$ (identical) and are conditionally independent on the mean and variance. So we have:
 
 $$
 p(\mathcal{D} \mid w) = p(y_1, \dots, y_N \mid w, x_1, \dots, x_n, \sigma^2)
@@ -226,7 +227,7 @@ $$
 
 This is a little better - its nice to be able to estimate the variance of the noise as well. 
 
-## 4.1 **Issues with MLE**
+#### 4.1 **Issues with MLE**
 ___
 
 There are several issues with maximum likelihood estimation. But the most glaring one, to me at least, is that it fundamentally answers the wrong question. We don't really care about the probability of observing the data given some parameter setting. We care about the probability of some parameter setting given the data.  
@@ -341,3 +342,20 @@ $$
 
 If we send the prior variance of the weight to $0$, i.e. $\alpha^2 \to 0$, then the regularization coefficient $\lambda$ grows very large so the weights move towards $0$. Similarly, if we send the noise variance $ \sigma^2 \to \infty$, we'll see a similar result.  
 
+
+
+
+# 6. **Bayesian Linear Regression**
+
+#### 6.1 **Marginal Likelihood**
+
+
+
+#### 6.2 **Posterior Distribution**
+
+
+# 7. Additional Notes
+
+I was initially confused by the notion of likelihood. What does the likelihood term $p(\mathcal{D} \mid w)$, the "probability of observing the data" even mean?
+
+We assume that the data was generated as part of a causal process paramaterized by $w$. The likelihood of the data is the probability that the parameter setting $w$ generated the data. 
