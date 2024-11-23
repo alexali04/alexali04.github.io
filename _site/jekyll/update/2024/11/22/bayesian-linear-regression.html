@@ -51,7 +51,7 @@
 <hr />
 <p>Things are easy when they’re simple. As far as curves go, linear curves are about as nice as it gets.</p>
 
-<p>I present to you a rough anthology of linear regression. By this, I mean several different approaches to linear regression. There are several computational tricks / alternative derivations which are shorter and easier. I’ll go through some of them at the end of the article but it’s probably valuable to do it the painful way at least once.</p>
+<p>I present to you a rough anthology of linear regression. By this, I mean several different approaches to linear regression. There are several computational tricks / alternative derivations which are shorter and easier. I’ll go through some of them at the end of the article but it’s probably valuable to do it the painful way at least once.<sup id="fnref:1"><a href="#fn:1" class="footnote" rel="footnote" role="doc-noteref">1</a></sup></p>
 
 <h1 id="2-problem-set-up">2. <strong>Problem Set up</strong></h1>
 <hr />
@@ -280,13 +280,196 @@
 
 <h4 id="61-marginal-likelihood">6.1 <strong>Marginal Likelihood</strong></h4>
 
+<p>I want to talk briefly about the marginal likelihood (evidence, partition function) which is the denominator in Bayes rule. By the sum and product rules of probability, we have:</p>
+
+\[p(\mathcal{D}) = \int p(\mathcal{D} \mid w) \ p(w) \ dw\]
+
+<p>By marginalizing out $w$ (hence the name <strong>marginal</strong> likelihood), we get a term which tells us the likelihood of the data, conditioned on hyperparameters. This also lets us directly perform hyperparameter optimization. Contrast optimizing this quantity with other hyperparameter optimization techniques like grid search which is exponential in the number of hyperparameter-combinations or random search which is … random.</p>
+
+<p>Of course, the downside of this method  (<strong>marginal likelihood optimization</strong> or <strong>Type 2 MLE</strong>) is that it involves an integral which is often intractable.</p>
+
+<p>We’ll use the same prior and noise distribution as before and compute the marginal likelihood. Buckle up.<sup id="fnref:2"><a href="#fn:2" class="footnote" rel="footnote" role="doc-noteref">2</a></sup></p>
+
+\[p(\mathcal{D}) = \int \mathcal{N}(y ; Xw, \sigma^2 I) \ \mathcal{N}(w ; 0, \alpha^2 I) \ dw\]
+
+\[= c \int \exp \left \{
+- \frac{1}{2} \left [
+    \frac{(y - Xw)^T (y - Xw)}{\sigma^2} + \frac{w^T w}{\alpha^2}
+    \right ]
+\right \} \ dw\]
+
+\[= c \int \exp \left \{
+- \frac{1}{2} \left [
+    \frac{y^T y + w^T X^T X w - 2 w^T X^T y}{\sigma^2} + \frac{w^T w}{\alpha^2}
+    \right ]
+\right \} dw\]
+
+<p>The strategy here is to transform the exponential inside the integrand into an unnormalized probability distribution, or the posterior, $p(w \mid \mathcal{D}) \propto p(\mathcal{D} \mid w) p(w)$. Moving the $y^T y$ term out of the integral (since it doesn’t depend on $ws), we get:</p>
+
+\[= c' \int \exp \left \{
+- \frac{1}{2} \left [
+    \frac{w^T X^T X w - 2 w^T X^T y}{\sigma^2} + \frac{w^T w}{\alpha^2}
+    \right ]
+\right \} dw\]
+
+\[= c' \int \exp \left \{
+- \frac{1}{2} \left [
+    w^T \left ( \frac{X^T X}{\sigma^2} + \frac{I}{\alpha^2} \right ) w - \frac{2 w^T X^T y}{\sigma^2}
+    \right ]
+\right \} dw\]
+
+<p>We can ascertain the precision matrix $\Lambda = \frac{X^T X}{\sigma^2} + \frac{I}{\alpha^2}$. We want the integrand to be (ignoring the exponential), of the form $(w - \mu)^T \Lambda (w - \mu)$. We have:</p>
+
+\[(w - \mu)^T \Lambda (w - \mu) = w^T \Lambda w + \mu^T \Lambda \mu - 2 w^T \Lambda \mu\]
+
+<p>By inspection, we know that $2 w^T \Lambda \mu = \frac{2 w^T X^T y}{\sigma^2}$. So we have $\Lambda \mu = \frac{X^T y}{\sigma^2}, \mu = \Lambda^{-1} \frac{X^T y}{\sigma^2}$.</p>
+
+<p>So we have:</p>
+
+\[w^T \Lambda w - 2 w^T \Lambda \mu = (w - \mu)^T \Lambda (w - \mu) - \mu^T \Lambda \mu\]
+
+<p>So we have:</p>
+
+\[p(\mathcal{D}) = c' \int \exp \left \{ - \frac{1}{2} \left [
+(w - \mu)^T \Lambda (w - \mu) - \mu^T \Lambda \mu
+\right ]
+\right \} \ dw\]
+
+<p>Finally, we can take out the term $\mu^T \Lambda \mu$ to get:</p>
+
+\[p(\mathcal{D}) = c'' \int \exp \left \{ - \frac{1}{2} 
+(w - \mu)^T \Lambda (w - \mu)
+\right \} \ dw\]
+
+<p>There’s a nice integral trick to know here. If we have a probability distribution $f(x) = \frac{\hat{f}(x)}{Z}$ where $Z$ is the normalizing constant, it follows that the integral of the unnormalized probability distribution is $\int \hat{f}
+(x) \ dx = \frac{1}{Z}$.</p>
+
+<p>The integrand corresponds to an unnormalized normal distribution $\mathcal{UN}(w; \mu, \Lambda^{-1})$ (my own notation :P). So we have:</p>
+
+\[\int \exp \left \{ - \frac{1}{2} 
+(w - \mu)^T \Lambda (w - \mu)
+\right \} \ dw = (2 \pi )^{\frac{d}{2}} \det(\Lambda^{-1})^{\frac{1}{2}}\]
+
+\[= \frac{(2 \pi )^{\frac{d}{2}}}{\det(\Lambda)^{\frac{1}{2}}}\]
+
+<p>Finally, we’ve reached a closed form solution.</p>
+
+\[p(\mathcal{D}) = c'' \frac{(2 \pi )^{\frac{d}{2}}}{\det(\Lambda)^{\frac{1}{2}}}\]
+
+\[= \frac{\exp \left \{ - \frac{1}{2} \left [ \frac{y^T y}{\sigma^2} + \mu^T \Lambda \mu  \right ]   \right \}}{(2 \pi \sigma^2)^{\frac{n}{2}} (2 \pi \alpha^2)^{\frac{d}{2}}}
+\frac{(2 \pi )^{\frac{d}{2}}}{\det(\Lambda)^{\frac{1}{2}}}\]
+
+<p>However, we can again, re-write this slightly. First of all, observe that:</p>
+
+\[\mu^T \Lambda \mu = \frac{y^T X}{\sigma^2} \Lambda^{-1} \Lambda \Lambda^{-1} \frac{X^T y}{\sigma^2}\]
+
+\[= \frac{y^T X \Lambda^{-1} X^T y}{\sigma^4}\]
+
+<p>So let’s re-write the term in this exponential as:</p>
+
+\[p(\mathcal{D}) = \frac{\exp \left \{ - \frac{1}{2} y^T \left [ \frac{I}{\sigma^2} + \frac{X \Lambda^{-1} X}{\sigma^4}  \right ] y   \right \}}{(2 \pi \sigma^2)^{\frac{n}{2}} (2 \pi \alpha^2)^{\frac{d}{2}}}
+\frac{(2 \pi )^{\frac{d}{2}}}{\det(\Lambda)^{\frac{1}{2}}}\]
+
+<p>Define $\Lambda_0 = \frac{I}{\sigma^2} + \frac{X \Lambda^{-1} X}{\sigma^4}$. So we have</p>
+
+\[p(\mathcal{D}) = \frac{\exp \left \{ - \frac{1}{2} y^T \Lambda_0 y   \right \}}{(2 \pi \sigma^2)^{\frac{n}{2}} (2 \pi \alpha^2)^{\frac{d}{2}}}
+\frac{(2 \pi )^{\frac{d}{2}}}{\det(\Lambda)^{\frac{1}{2}}}\]
+
+<p>We can honestly leave it here. But we won’t because we know there is a Gaussian distribution hiding <em>somewhere</em> in there. I’m gonna go ahead and take a shot in the dark that $p(\mathcal{D}) = \mathcal{N}(0, \Lambda_0^{-1})$. Let’s test that hypothesis.</p>
+
+<p>I’ll introduce two lemmas which are generally quite useful in Bayesian statistics. The first one is the <strong>Woodbury Matrix Identity</strong>. It states:</p>
+
+\[(A + UCV)^{-1} = A^{-1} - A^{-1} U (C^{-1} + V A^{-1} U)^{-1} V A^{-1}\]
+
+<p>Define $C = \frac{\Lambda^{-1}}{\sigma^4}, U = -X, V = X^T, A = \frac{I}{\sigma^2}$. Then, we have:</p>
+
+\[\Lambda_0^{-1} = \sigma^2 I + \sigma^2 I X (\sigma^4 \Lambda - \sigma^2 X^T X)^{-1} X^T \sigma^2 I\]
+
+<p>Substitute in $\Lambda = \frac{X^T X}{\sigma^2} + \frac{I}{\alpha^2}$.</p>
+
+\[\Lambda_0^{-1} = \sigma^2 I + \sigma^4 X \left (\sigma^4 \left ( \frac{X^T X}{\sigma^2} + \frac{I}{\alpha^2} \right ) - \sigma^2 X^T X \right )^{-1} X^T\]
+
+\[\Lambda_0^{-1} = \sigma^2 I + \sigma^4 X \left ( 
+    \sigma^2 X^T X + \frac{\sigma^4}{\alpha^2} I - \sigma^2 X^T X
+    \right )^{-1} X^T\]
+
+\[= \sigma^2 I + \sigma^4 X \left ( 
+    \frac{\sigma^4}{\alpha^2} I 
+    \right )^{-1} X^T\]
+
+\[= \sigma^2 I + \alpha^2 X X^T\]
+
+<p>When I derived this for the first time, I was actually surprised by how nice this matrix inverse is.<sup id="fnref:3"><a href="#fn:3" class="footnote" rel="footnote" role="doc-noteref">3</a></sup></p>
+
+<p>Next, let’s compute the determinant of this. What I’m hoping for is that the determinant of the covariance matrix will absorb some of the straggling terms in the normalizing coefficient(s). Recall, we have:</p>
+
+\[p(\mathcal{D}) = \frac{\exp \left \{ - \frac{1}{2} y^T \Lambda_0^{-1} y   \right \}}{(2 \pi \sigma^2)^{\frac{n}{2}} (2 \pi \alpha^2)^{\frac{d}{2}}}
+\frac{(2 \pi )^{\frac{d}{2}}}{\det(\Lambda)^{\frac{1}{2}}}\]
+
+<p>First, we can immediately cancel out $(2 \pi)^{\frac{d}{2}}$.</p>
+
+\[p(\mathcal{D}) = \frac{\exp \left \{ - \frac{1}{2} y^T \Lambda_0^{-1} y   \right \}}{(2 \pi \sigma^2)^{\frac{n}{2}} (\alpha^2)^{\frac{d}{2}} \det(\Lambda)^{\frac{1}{2}}}\]
+
+<p>So now, we’ll use the <strong>determinant lemma</strong> to compute $\det(\Lambda_0^{-1})$. The determinant lemma states:</p>
+
+\[\det(A + UWV^T) = \det(W^{-1} + V^T A^{-1} U) \det(W) \det(A)\]
+
+\[\det(\sigma^2 I + X \alpha^2 I X^T) = \det(\frac{I}{\alpha^2} + X^T \frac{I}{\sigma^2} X) \det(\alpha^2 I) \det (\sigma^2 I)\]
+
+<p>Recall that $\Lambda = \frac{I}{\alpha^2} + \frac{X^T X}{\sigma^2}$. So we have:</p>
+
+\[\det(\Lambda_0^{-1}) = \det(\Lambda) (\alpha^2)^{d} (\sigma^2)^{n}\]
+
+\[\det(\Lambda_0^{-1})^{\frac{1}{2}} = \det(\Lambda)^{\frac{1}{2}} (\alpha^2)^{\frac{d}{2}} (\sigma^2)^{\frac{n}{2}}\]
+
+<p>So in conclusion, we have:</p>
+
+\[p(\mathcal{D}) = \frac{\exp \left \{ - \frac{1}{2} y^T \Lambda_0^{-1} y \right \}}{(2 \pi)^{\frac{n}{2}} \det(\Lambda_0^{-1})^{\frac{1}{2}}}\]
+
+\[\boxed{\mathcal{D} \sim \mathcal{N}(y; 0, \sigma^2 I + \alpha^2 X X^T)}\]
+
 <h4 id="62-posterior-distribution">6.2 <strong>Posterior Distribution</strong></h4>
 
-<h1 id="7-additional-notes">7. Additional Notes</h1>
+<h2 id="8-footnotes">8. <strong>Footnotes</strong></h2>
+<hr />
 
-<p>I was initially confused by the notion of likelihood. What does the likelihood term $p(\mathcal{D} \mid w)$, the “probability of observing the data” even mean?</p>
+<div class="footnotes" role="doc-endnotes">
+  <ol>
+    <li id="fn:1">
+      <p>All of these examples work with feature transformations on $X$, i.e. replacing $X$ with $\Phi$. Linear regression is super powerful… when it can be made non-linear! <a href="#fnref:1" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:2">
+      <p>Bayesian statistics math is notoriously tedious. There’s a much easier way to do this by treating it as a Gaussian Process. I’ll derive it quickly here. Suppose $w \sim \mathcal{N}(0, \alpha^2 I), \epsilon_x \sim \mathcal{N}(0, \sigma^2 I)$.</p>
 
-<p>We assume that the data was generated as part of a causal process paramaterized by $w$. The likelihood of the data is the probability that the parameter setting $w$ generated the data.</p>
+\[y = Xw + \epsilon_x\]
+
+\[E[y]= E[Xw] + E[\epsilon_x]\]
+
+      <p>$E[\epsilon_x] = 0$ since it has mean $0$. For the same reason,</p>
+
+\[E[Xw] = X E[w] = 0\]
+
+      <p>So $E[y] = 0$. Next, we’ll compute the covariance matrix.</p>
+
+\[E[y y^T] = E[(Xw + \epsilon_x)(Xw + \epsilon_x)^T]\]
+
+      <p>Order matters here. These are all matrices so we cannot interchange the order of multiplication between $Xw$ and $w^T X^T$.</p>
+
+\[= E[Xw w^T X^T + \epsilon_x \epsilon_x^T + \epsilon_x w^T X^T + X w \epsilon_x^T ]\]
+
+      <p>The other terms go to $0$. Since $\epsilon_x$ and $w$ are independent, $E[\epsilon_x w] = E[\epsilon] E[w]$ = 0.</p>
+
+\[= X E[ww^T] X^T + E[\epsilon_x \epsilon_x^T]\]
+
+\[= \sigma^2 I + \alpha^2 X X^T\]
+
+      <p>Much easier… : ) <a href="#fnref:2" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:3">
+      <p>Sometimes it’s a lot nicer to use the precision matrix (inverse of covariance matrix). I kind of want to make a post later about what the precision matrix <em>actually</em> means - it has something to do with partial correlations. Here, the precision matrix is quite ugly but the covariance matrix is really nice. <a href="#fnref:3" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
 
   </div><a class="u-url" href="/jekyll/update/2024/11/22/bayesian-linear-regression.html" hidden></a>
 </article>
