@@ -4,15 +4,19 @@ title: About
 permalink: /about/
 ---
 
-This is the base Jekyll theme. You can find out more info about customizing your Jekyll theme, as well as basic Jekyll usage documentation at [jekyllrb.com](https://jekyllrb.com/)
+I'm a undergraduate at NYU, majoring in computer science. I have a particular focus on machine learning. I'm currently interested in interpretability and uncertainty quantification. 
 
-You can find the source code for Minima at GitHub:
-[jekyll][jekyll-organization] /
-[minima](https://github.com/jekyll/minima)
+Here are some random topics I have vague interest in learning about. These interests have yet to coagulate into any specific experiments...
 
-You can find the source code for Jekyll at GitHub:
-[jekyll][jekyll-organization] /
-[jekyll](https://github.com/jekyll/jekyll)
+DNN Interpretability:
+- Neural Tangent Kernel
+- Mechanistic Interpetability
+- Neural Collapse
 
+Uncertainty Quantification:
+- Conformal Prediction
+- Bayesian Deep Learning
 
-[jekyll-organization]: https://github.com/jekyll
+Probabilistic Classical Stats:
+- Probabilistic PCA is a generally good method for finding the number of principal components which explain the data. I'm wondering if there's a way to find the optimal number of clusters, i.e. a probabilistic k-means or probabilistic GMMs. 
+
