@@ -10,9 +10,7 @@ ___
 Things are nice when they're simple. As far as curves go, linear is about as nice as it gets.
 
 
-I present to you a rough anthology of linear regression. By this, I mean several different approaches to linear regression.  
-
-{{ content | toc }}
+I present to you a rough anthology of linear regression. By this, I mean several different approaches to linear regression. There are several computational tricks / alternative derivations
 
 
 # 2. **Problem Set up**
@@ -205,16 +203,139 @@ $$
 w_{\text{MLE}} = (X^T X)^{-1} X^T y
 $$
 
+This is no different from what we've already seen. But we can also derive a maximum likelihood estimate for the noise variance. 
+
+
+$$
+0 = \frac{\partial}{\partial \sigma^2} \log p(\mathcal{D} \mid w) = \frac{\partial}{\partial \sigma^2} \left [ - \frac{1}{2 \sigma^2} (y^Ty + w^T X^T X w - 2 y^T X w) - \frac{n}{2} \log(2 \pi \sigma^2) \right ]
+$$
+
+$$
+0 = - \frac{2 n \pi}{4 \pi \sigma^2} + \frac{1}{2 \sigma^4} (y - Xw)^T (y - Xw)
+$$
+
+$$
+\frac{n}{\sigma^2} = \frac{1}{\sigma^4} (y - Xw)^T (y - Xw)
+$$
+
+$$
+\sigma^2_{\text{MLE}} = \frac{1}{n} (y - Xw)^T (y - Xw)
+$$
+
+This is a little better - its nice to be able to estimate the variance of the noise as well. 
+
 ## 4.1 **Issues with MLE**
 
-
-
+There are several issues with maximum likelihood estimation. But the most glaring one, to me at least, is that it fundamentally answers the wrong question. We don't really care about the probability of observing the data given some parameter setting. We care about the probability of some parameter setting given the data.  
 
 
 # 5.0 MAP
 
+One way to do this is with **MAP** or **Maximum a Posteriori** estimation. 
+
+Bayes Rule states:
+
+$$
+p(w \mid \mathcal{D}) = \frac{p(\mathcal{D} \mid w) p(w)}{p(\mathcal{D})}
+$$
+
+The left-hand side is called the **posterior distribution**. It's proportional to the likelihood multiplied with the prior distribution. The prior represents our beliefs about the data before we have observed the data - the posterior represents our updated beliefs after having observed the data (likelihood). 
+
+So we need to place a prior distribution on $w$. So we can specify:
+
+$$
+w \sim \mathcal{N}(0, \alpha^2 I)
+$$
+
+$$
+\epsilon_x \sim \mathcal{N}(0, \sigma^2)
+$$
+
+So the joint distribution can be written as a multivariate Gaussian. 
+
+$$
+y \mid w, X, \sigma^2 \sim \mathcal{N}(Xw, \sigma^2 I)
+$$
+
+The MAP estimate $w_{\text{MAP}}$ is the parameter setting which maximizes the probability of the parameter given the data. So we want:
+
+$$
+w_{\text{MAP}} = \argmax_{w} p(w \mid \mathcal{D})
+$$
+
+Again, we can take the logarithm, so we have:
+
+$$
+w_{\text{MAP}} = \argmax_{w} \ \log p(w \mid \mathcal{D})
+$$
+
+$$
+= \argmax_{w} \ \log p(\mathcal{D} \mid w) + \log p(w) - \log(\mathcal{D})
+$$
+
+The denominator of Bayes rule is called the marginal likelihood or the partition function or the evidence. Since it doesn't depend on $w$, we can just ignore it in finding $w_{\text{MAP}}$. So we have:
+
+$$
+0 = \frac{\partial}{\partial w} \log p(\mathcal{D} \mid w) + \log p(w)
+$$
+
+Taking the logarithm of normal distributions, 
+
+$$
+= \frac{\partial}{\partial w} \left [ 
+- \frac{1}{2 \sigma^2} (y - Xw)^T (y - Xw) - \frac{n}{2} \log (2 \pi \sigma^2) - \frac{1}{2 \alpha^2} w^T w - \frac{d}{2} \log (2 \pi \alpha^2)
+\right ]
+$$
+
+We've performed bits and pieces of this derivative above. So we get
 
 
 
+$$
+0 = \frac{X^T y}{\sigma^2} - \frac{w}{\alpha^2} - \frac{X^T X w}{\sigma^2}
+$$
 
-# 6.0 Bayesian Linear Regression
+$$
+0 = X^T y - \frac{\sigma^2 w}{\alpha^2} - X^T X w
+$$
+
+Define $\lambda = \frac{\sigma^2}{\alpha^2}$. Then, we have:
+
+$$
+0 = X^T y - \lambda w - X^T X w
+$$
+
+$$
+(X^T X + \lambda I)w = X^T y
+$$
+
+$$
+w_{\text{MAP}} = (X^T X + \lambda I)^{-1} X^T y
+$$
+
+We can reach this formula by finding:
+
+$$
+w_{\text{MAP}} = \argmin_{w} (y - Xw)^T (y - Xw) + \lambda w^T w
+$$
+
+In other words, we can recover $L_2$ regularization by assuming Gaussian noise and a Gaussian prior. I like this probabilistic approach much better because it all feels very motivated from our assumptions. 
+
+We can also derive MAP solutions for the noise and weight variances. First, the MAP solution for the noise variance is the same as the MLE solution because it's not affected by the prior. 
+
+$$
+ 0 = \frac{\partial}{\partial \alpha^2} \left [ 
+ - \frac{1}{2 \alpha^2} w^T w - \frac{d}{2} \log (2 \pi \alpha^2)
+\right ]
+$$
+
+$$
+= \frac{1}{2 \alpha^4} w^T w - \frac{d}{2 \alpha^2}
+$$
+
+$$
+\alpha^2_{\text{MAP}} = \frac{1}{d} w_{\text{MAP}}^T w_{\text{MAP}}
+$$
+
+If we send the prior variance of the weight to $0$, i.e. $\alpha^2 \to 0$, then the regularization coefficient $\lambda$ grows very large so the weights move towards $0$. Similarly, if we send the noise variance $ \sigma^2 \to \infty$, we'll see a similar result.  
+
