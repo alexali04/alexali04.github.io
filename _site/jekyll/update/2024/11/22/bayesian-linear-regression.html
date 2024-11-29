@@ -3,9 +3,9 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>An Anthology for Bayesian Linear Regresion | Alex’s Blog</title>
+<title>An Anthology for Linear Regresion | Alex’s Blog</title>
 <meta name="generator" content="Jekyll v4.3.4" />
-<meta property="og:title" content="An Anthology for Bayesian Linear Regresion" />
+<meta property="og:title" content="An Anthology for Linear Regresion" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="1. Introduction Things are easy when they’re simple. As far as curves go, linear curves are about as nice as it gets." />
 <meta property="og:description" content="1. Introduction Things are easy when they’re simple. As far as curves go, linear curves are about as nice as it gets." />
@@ -15,9 +15,9 @@
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2024-11-22T00:07:44-05:00" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="An Anthology for Bayesian Linear Regresion" />
+<meta property="twitter:title" content="An Anthology for Linear Regresion" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2024-11-22T00:07:44-05:00","datePublished":"2024-11-22T00:07:44-05:00","description":"1. Introduction Things are easy when they’re simple. As far as curves go, linear curves are about as nice as it gets.","headline":"An Anthology for Bayesian Linear Regresion","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/jekyll/update/2024/11/22/bayesian-linear-regression.html"},"url":"http://localhost:4000/jekyll/update/2024/11/22/bayesian-linear-regression.html"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2024-11-22T00:07:44-05:00","datePublished":"2024-11-22T00:07:44-05:00","description":"1. Introduction Things are easy when they’re simple. As far as curves go, linear curves are about as nice as it gets.","headline":"An Anthology for Linear Regresion","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/jekyll/update/2024/11/22/bayesian-linear-regression.html"},"url":"http://localhost:4000/jekyll/update/2024/11/22/bayesian-linear-regression.html"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Alex&apos;s Blog" /></head>
 <body><header class="site-header" role="banner">
@@ -40,7 +40,7 @@
           <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
   <header class="post-header">
-    <h1 class="post-title p-name" itemprop="name headline">An Anthology for Bayesian Linear Regresion</h1>
+    <h1 class="post-title p-name" itemprop="name headline">An Anthology for Linear Regresion</h1>
     <p class="post-meta">
       <time class="dt-published" datetime="2024-11-22T00:07:44-05:00" itemprop="datePublished">Nov 22, 2024
       </time></p>
@@ -51,7 +51,9 @@
 <hr />
 <p>Things are easy when they’re simple. As far as curves go, linear curves are about as nice as it gets.</p>
 
-<p>I present to you a rough anthology of linear regression. By this, I mean several different approaches to linear regression. There are several computational tricks / alternative derivations which are shorter and easier. I’ll go through some of them at the end of the article but it’s probably valuable to do it the painful way at least once.<sup id="fnref:1"><a href="#fn:1" class="footnote" rel="footnote" role="doc-noteref">1</a></sup></p>
+<p>I present to you a rough anthology of linear regression. By this, I mean several different approaches to linear regression. We’ll start off with minimizing MSE and end up with a Bayesian approach with hopefully a (semi-)rigorous approach throughout. Ideally, everything should <em>feel</em> motivated.</p>
+
+<p>There are several computational tricks / alternative derivations which making things shorter and easier. I’ll go through some of them at the end of the article but it’s probably valuable to do it the painful way at least once.<sup id="fnref:1"><a href="#fn:1" class="footnote" rel="footnote" role="doc-noteref">1</a></sup></p>
 
 <h1 id="2-problem-set-up">2. <strong>Problem Set up</strong></h1>
 <hr />
@@ -367,10 +369,10 @@
 
 <p>So let’s re-write the term in this exponential as:</p>
 
-\[p(\mathcal{D}) = \frac{\exp \left \{ - \frac{1}{2} y^T \left [ \frac{I}{\sigma^2} + \frac{X \Lambda^{-1} X}{\sigma^4}  \right ] y   \right \}}{(2 \pi \sigma^2)^{\frac{n}{2}} (2 \pi \alpha^2)^{\frac{d}{2}}}
+\[p(\mathcal{D}) = \frac{\exp \left \{ - \frac{1}{2} y^T \left [ \frac{I}{\sigma^2} + \frac{X \Lambda^{-1} X^T}{\sigma^4}  \right ] y   \right \}}{(2 \pi \sigma^2)^{\frac{n}{2}} (2 \pi \alpha^2)^{\frac{d}{2}}}
 \frac{(2 \pi )^{\frac{d}{2}}}{\det(\Lambda)^{\frac{1}{2}}}\]
 
-<p>Define $\Lambda_0 = \frac{I}{\sigma^2} + \frac{X \Lambda^{-1} X}{\sigma^4}$. So we have</p>
+<p>Define $\Lambda_0 = \frac{I}{\sigma^2} + \frac{X \Lambda^{-1} X^T}{\sigma^4}$. So we have</p>
 
 \[p(\mathcal{D}) = \frac{\exp \left \{ - \frac{1}{2} y^T \Lambda_0 y   \right \}}{(2 \pi \sigma^2)^{\frac{n}{2}} (2 \pi \alpha^2)^{\frac{d}{2}}}
 \frac{(2 \pi )^{\frac{d}{2}}}{\det(\Lambda)^{\frac{1}{2}}}\]
@@ -429,6 +431,116 @@
 \[\boxed{\mathcal{D} \sim \mathcal{N}(y; 0, \sigma^2 I + \alpha^2 X X^T)}\]
 
 <h4 id="62-posterior-distribution">6.2 <strong>Posterior Distribution</strong></h4>
+
+<p>Finally, let’s compute the normalized posterior distribution. Specifically, we want $p(w \mid \mathcal{D})$. This means we cannot have an expression for $w$ inside our expression.</p>
+
+<p>Let’s start from the beginning (don’t worry, we’ll skip steps). We have:</p>
+
+\[p(w \mid \mathcal{D}) = \frac{p(\mathcal{D} \mid w) p(w)}{p(\mathcal{D})}\]
+
+\[= \frac{\mathcal{N}(y; Xw, \sigma^2 I) \mathcal{N}(w; 0, \alpha^2 I)}{\mathcal{N}(y; 0, \Lambda_0^{-1})}\]
+
+\[= c \exp \left \{ - \frac{1}{2} \left [     
+    \frac{1}{\sigma^2} (y - Xw)^T (y - Xw) + \frac{1}{\alpha^2} (w^T w)   
+    - y^T \Lambda_0 y
+    \right ]  \right \}\]
+
+\[= c \exp \left \{ - \frac{1}{2} \left [     
+    \frac{1}{\sigma^2} (y^T y + w^T X^T X w - 2 y^T X w) + \frac{1}{\alpha^2} (w^T w)   
+    - y^T \Lambda_0 y
+    \right ]  \right \}\]
+
+<p>We can quickly run through the completing the square process here.</p>
+
+\[= c \exp \left \{ - \frac{1}{2} 
+    \left [     
+    \frac{1}{\sigma^2} y^T y 
+    + w^T \left ( \frac{X^T X}{\sigma^2} + \frac{I}{\alpha^2}    \right )  w
+    - 2 \frac{y^T X w}{\sigma^2}) 
+    - y^T \Lambda_0 y
+    \right ]  \right \}\]
+
+\[= c \exp \left \{ - \frac{1}{2} 
+    \left [     
+    \frac{y^T y }{\sigma^2}
+    + (w - \mu)^T \Lambda (w - \mu)
+    - \mu^T \Lambda \mu
+    - y^T \Lambda_0 y
+    \right ]  \right \}\]
+
+<p>Let’s expand $\Lambda_0$. We have:</p>
+
+\[= c \exp \left \{ - \frac{1}{2} 
+    \left [     
+   \frac{y^T y }{\sigma^2}
+    + (w - \mu)^T \Lambda (w - \mu)
+    - \mu^T \Lambda \mu
+    - y^T \left ( \frac{I}{\sigma^2} + \frac{X \Lambda^{-1} X^T}{\sigma^4}   \right ) y
+    \right ]  \right \}\]
+
+<p>The $\frac{I}{\sigma^2}$ term goes away. So we get:</p>
+
+\[= c \exp \left \{ - \frac{1}{2} 
+    \left [     
+    (w - \mu)^T \Lambda (w - \mu)
+    - \mu^T \Lambda \mu
+    - \frac{y^T X \Lambda^{-1} X^T y}{\sigma^4} 
+    \right ]  \right \}\]
+
+<p>Now, let’s expand the $\mu^T \Lambda \mu$ term.</p>
+
+\[= c \exp \left \{ - \frac{1}{2} 
+    \left [     
+    w^T \Lambda  w
+    - \frac{y^T X \Lambda^{-1} \Lambda \Lambda^{-1} X^T y}{\sigma^4}
+    - \frac{y^T X^T \Lambda^{-1} X y}{\sigma^4} 
+    \right ]  \right \}\]
+
+\[= c \exp \left \{ - \frac{1}{2} 
+    \left [     
+    w^T \Lambda  w
+    - \frac{y^T X \Lambda^{-1} X^T y}{\sigma^4}
+    - \frac{y^T X^T \Lambda^{-1} X y}{\sigma^4} 
+    \right ]  \right \}\]
+
+<p>One additional quantity we should probably compute is $\Lambda^{-1}$. Again, we’ll use the Woodbury Matrix identity.</p>
+
+\[(A + UCV)^{-1} = A^{-1} - A^{-1} U (C^{-1} + V A^{-1} U)^{-1} V A^{-1}\]
+
+\[\left ( \frac{1}{\alpha^2}I + \frac{1}{\sigma^2}X^T X \right )^{-1} = \alpha^2 I - \alpha^4 X^T (\sigma^2 I + \alpha^2  X X^T) X \alpha^2\]
+
+\[= \alpha^2 I - \alpha^4 X^T \Lambda_0^{-1} X\]
+
+<p>I leave this for last because I haven’t actually done this before. So we’ll be kind of doing it together in a way. As a guess, there will be a lot of redundant computation with the above quantities. There are obviously smart ways to do find this but I want to “verify” it in a sense.</p>
+
+<p>We know the marginal likelihood is a Gaussian distribution, $\mathcal{N}(0, \sigma^2 I + \alpha^2 XX^T)$. The posterior distribution is just the (unnormalized) integrand of the integral computed above, i.e. $p(w \mid \mathcal{D}) \propto \mathcal{N}(w ; \mu, \Lambda^{-1}), \Lambda = \frac{1}{\sigma^2} X^T X + \frac{1}{\alpha^2}I$. First, I want to write out key quantities from previous problems.</p>
+
+\[\Lambda = \frac{X^T X}{\sigma^2} + \frac{I}{\alpha^2}\]
+
+\[\mu = \frac{1}{\sigma^2}\Lambda^{-1} X^T y\]
+
+\[\Lambda_0 = \frac{I}{\sigma^2} + \frac{X^T \Lambda^{-1} X}{\sigma^4}\]
+
+<p>I think this is nice - it suggests cute symmetry between the posterior covariance ($\Lambda^{-1}$) and the marginal likelihood covariance ($\Lambda_0^{-1}$) .</p>
+
+<p>We have:</p>
+
+\[p(w \mid \mathcal{D}) = \mathcal{N}(\mu, \Lambda^{-1}) / \mathcal{N}(0, \sigma^2 I + \alpha^2 XX^T)\]
+
+\[= \frac{\exp \left \{ - \frac{1}{2} (w - \mu)^T \Lambda (w - \mu)  \right \}}{\sqrt{(2 \pi)^d \det(\Lambda^{-1})}} \frac{\sqrt{(2 \pi)^n \det(\Lambda_0^{-1})}}{\exp \left \{ - \frac{1}{2} y^T \Lambda_0 y^T \right \}}\]
+
+\[= \frac{\sqrt{(2 \pi )^n}}{\sqrt{(2 \pi)^d \det(\Lambda^{-1}) \det (\Lambda_0)}} \exp \left \{ - \frac{1}{2} \left [ (w - \mu)^T \Lambda (w - \mu) - y^T \Lambda_0 y \right ] \right \}\]
+
+<p>Let’s deal with the argument inside the exponential first. First, we can “undo” the completing the square process we did earlier.</p>
+
+\[(w - \mu)^T \Lambda (w - \mu) - y^T \Lambda_0 y = w^T \Lambda w - 2 w^T \Lambda \mu + \mu^T \Lambda \mu
+
+
+- y^T \Lambda_0 y\]
+
+\[= w^T \Lambda w + \frac{1}{\sigma^4} y^T X \Lambda^{-1} \Lambda \Lambda^{-1} X^T y - \frac{1}{\sigma^2} 2 y^T X \Lambda^{-1} \Lambda w - y^T \Lambda_0  y\]
+
+\[= w^T \Lambda w + \frac{1}{\sigma^4} y^T X \Lambda^{-1} X^T y - \frac{1}{\sigma^2} 2 y^T X w - y^T \left ( \frac{I}{\sigma^2} + \frac{X^T \Lambda^{-1} X}{\sigma^4} \right )  y\]
 
 <h2 id="8-footnotes">8. <strong>Footnotes</strong></h2>
 <hr />

@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "An Anthology for Bayesian Linear Regresion"
+title:  "An Anthology for Linear Regresion"
 date:   2024-11-22 00:07:44 -0500
 categories: jekyll update
 ---
@@ -9,7 +9,9 @@ categories: jekyll update
 ___
 Things are easy when they're simple. As far as curves go, linear curves are about as nice as it gets.
 
-I present to you a rough anthology of linear regression. By this, I mean several different approaches to linear regression. There are several computational tricks / alternative derivations which are shorter and easier. I'll go through some of them at the end of the article but it's probably valuable to do it the painful way at least once.[^1] 
+I present to you a rough anthology of linear regression. By this, I mean several different approaches to linear regression. We'll start off with minimizing MSE and end up with a Bayesian approach with hopefully a (semi-)rigorous approach throughout. Ideally, everything should *feel* motivated. 
+
+There are several computational tricks / alternative derivations which making things shorter and easier. I'll go through some of them at the end of the article but it's probably valuable to do it the painful way at least once.[^1] 
 
 
 # 2. **Problem Set up**
@@ -470,11 +472,11 @@ $$
 So let's re-write the term in this exponential as:
 
 $$
-p(\mathcal{D}) = \frac{\exp \left \{ - \frac{1}{2} y^T \left [ \frac{I}{\sigma^2} + \frac{X \Lambda^{-1} X}{\sigma^4}  \right ] y   \right \}}{(2 \pi \sigma^2)^{\frac{n}{2}} (2 \pi \alpha^2)^{\frac{d}{2}}}
+p(\mathcal{D}) = \frac{\exp \left \{ - \frac{1}{2} y^T \left [ \frac{I}{\sigma^2} + \frac{X \Lambda^{-1} X^T}{\sigma^4}  \right ] y   \right \}}{(2 \pi \sigma^2)^{\frac{n}{2}} (2 \pi \alpha^2)^{\frac{d}{2}}}
 \frac{(2 \pi )^{\frac{d}{2}}}{\det(\Lambda)^{\frac{1}{2}}}
 $$
 
-Define $\Lambda_0 = \frac{I}{\sigma^2} + \frac{X \Lambda^{-1} X}{\sigma^4}$. So we have 
+Define $\Lambda_0 = \frac{I}{\sigma^2} + \frac{X \Lambda^{-1} X^T}{\sigma^4}$. So we have 
 
 $$
 p(\mathcal{D}) = \frac{\exp \left \{ - \frac{1}{2} y^T \Lambda_0 y   \right \}}{(2 \pi \sigma^2)^{\frac{n}{2}} (2 \pi \alpha^2)^{\frac{d}{2}}}
@@ -566,11 +568,102 @@ $$
 
 
 
-
 #### 6.2 **Posterior Distribution**
 
+Finally, let's compute the normalized posterior distribution. Specifically, we want $p(w \mid \mathcal{D})$. Good news - we've already done this! The integrand of the marginal likelihood is our answer: we have,
 
+$$
+p(w \mid \mathcal{D}) = \mathcal{N}(\mu, \Lambda^{-1})
+$$
 
+$$
+\Lambda = \frac{X^T X}{\sigma^2} + \frac{I}{\alpha^2}
+$$
+
+$$
+\mu = \Lambda^{-1} \frac{X^T y}{\sigma^2}
+$$
+
+There are very simple ways to derive this from Gaussian identities. But since most of the work is already kind of done for us, let's derive it the "hard" way. 
+
+$$
+p(w \mid \mathcal{D}) = \frac{p(\mathcal{D} \mid w) p(w)}{p(\mathcal{D})}
+$$
+
+$$
+= \frac{\mathcal{N}(y; Xw, \sigma^2 I) \mathcal{N}(w; 0, \alpha^2 I)}{\mathcal{N}(y; 0, \alpha^2 X X^T + \sigma^2 I)}
+$$
+
+From the previous section, we can write the denominator:
+
+$$
+D_e = \frac{(2 \pi \sigma^2)^{\frac{n}{2}} \det(\Lambda)^{\frac{1}{2}} (\alpha^2)^{\frac{D}{2}}}{\exp(- \frac{1}{2} [ \frac{y^T y}{\sigma^2} - \mu^T \Lambda \mu])}
+$$
+
+and the numerator:
+
+$$
+N_u = \frac{\exp \left \{  - \frac{1}{2 \sigma^2} (y - Xw)^T (y - Xw) - \frac{1}{2 \alpha^2} w^T w  \right \}}{(2 \pi \sigma^2)^{\frac{n}{2}} (2 \pi \alpha^2)^{\frac{D}{2}}}
+$$
+
+Now, most of the constants cancel out except for $(2 \pi)^{\frac{D}{2}}$ and $\det(\Lambda)^{\frac{1}{2}}$. Let $E(w)$ be the argument inside the exponential. 
+
+$$
+\frac{N_u}{D_e} = \frac{E(w)}{\sqrt{(2 \pi)^D \det(\Lambda^{-1})}}
+$$
+
+Finally, let's put an end to this long fight and compute $E(w)$. Just be careful about signs. 
+
+$$
+E(w) = - \frac{1}{2} \left [   
+\frac{(y - Xw)^T(y - Xw)}{\sigma^2} + \frac{w^T w}{\alpha^2} + \mu^T \Lambda \mu - \frac{y^T y}{\sigma^2}
+\right ]
+$$
+
+$$
+E(w) = - \frac{1}{2} \left [   
+\frac{y^T y + w^T X^T X w - 2 w^T X^T y}{\sigma^2} + \frac{w^T w}{\alpha^2} + \mu^T \Lambda \mu - \frac{y^T y}{\sigma^2}
+\right ]
+$$
+
+Canceling out the $\frac{y^T y}{\sigma^2}$ terms, 
+
+$$
+= - \frac{1}{2} \left [   
+    w^T \left (\frac{X^T X}{\sigma^2} + \frac{I}{\alpha^2} \right ) w - 2
+\frac{w^T X^T y}{\sigma^2} + \mu^T \Lambda \mu 
+\right ]
+$$
+
+$$
+= - \frac{1}{2} \left [   
+    w^T \Lambda w - 2 w^T \Lambda \mu + \mu^T \Lambda \mu 
+\right ]
+$$
+
+In completing the square in the previous section, we found this to be equal to: 
+
+$$
+= - \frac{1}{2} \left [   
+    (w - \mu)^T \Lambda (w - \mu) - \mu^T \Lambda \mu + \mu^T \Lambda \mu 
+\right ]
+$$
+
+$$
+= - \frac{1}{2} \left [   
+    (w - \mu)^T \Lambda (w - \mu)
+\right ]
+$$
+
+So we have:
+
+$$
+p(w \mid \mathcal{D}) = \frac{\exp(- \frac{1}{2} (w - \mu)^T \Lambda (w - \mu))}{\sqrt((2 \pi)^{D} \det(\Lambda^{-1}))}   
+$$
+
+$$
+\boxed{w \mid \mathcal{D} \sim \mathcal{N}(\mu, \Lambda^{-1})}
+$$
 
 
 ## 8. **Footnotes**
