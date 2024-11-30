@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "An Anthology for Linear Regresion"
-date:   2024-11-22 00:07:44 -0500
+date:   2024-11-29 00:07:44 -0500
 categories: jekyll update
 ---
 
@@ -9,9 +9,9 @@ categories: jekyll update
 ___
 Things are easy when they're simple. As far as curves go, linear curves are about as nice as it gets.
 
-I present to you a rough anthology of linear regression. By this, I mean several different approaches to linear regression. We'll start off with minimizing MSE and end up with a Bayesian approach with hopefully a (semi-)rigorous approach throughout. Ideally, everything should *feel* motivated. 
+I present to you a rough anthology of linear regression.[^1]  By this, I mean several different approaches to linear regression. We'll start off with minimizing MSE and end up with a Bayesian approach with hopefully a (semi-)rigorous approach throughout. Ideally, everything should *feel* motivated. 
 
-There are several computational tricks / alternative derivations which making things shorter and easier. I'll go through some of them at the end of the article but it's probably valuable to do it the painful way at least once.[^1] 
+There are several computational tricks / alternative derivations which making things shorter and easier. These methods are also cleverer. I'll go through some of them at the end of the article but it's probably valuable to do it the painful way at least once.
 
 
 # 2. **Problem Set up**
@@ -31,7 +31,7 @@ $$
 
 where $w$ represents the weights or scaling coefficients. 
 
-We can collect the target values $y_1, \dots, y_n$ into a vector and the feature vectors $x_1, \dots, x_N$ into a **design matrix** $X$ where the row $X_i = x_i$. This ensures each $y_i = x_i^T w$. 
+We can collect the target values $y_1, \dots, y_n$ into a vector $y$ and the feature vectors $x_1, \dots, x_N$ into a **design matrix** $X$ where the row $X_i = x_i$. This ensures each $y_i = x_i^T w$. 
 
 $$
 y = X w + \epsilon_x
@@ -42,7 +42,7 @@ Note that this represents $y$ as a column vector.
 # 3. **Minimize MSE**
 ___
 
-The residual (error between $Xw$ and $y$) is defined as:
+The first perspective on linear regression is just minimizing the error between the targets $y$ and the predictions $Xw$. We'll derive this with matrix calculus[^2].The residual (error between $Xw$ and $y$) is defined as:
 
 $$
 e = y - Xw
@@ -51,7 +51,7 @@ $$
 We want to find the $\hat{w}$ that minimizes the **mean-squared error**:
 
 $$
-\hat{w} = \argmin_{w} e^T e = \argmin_{w} \ (y - Xw)^T (y - Xw)
+\hat{w} = \argmin_{w} \ e^T e = \argmin_{w} \ (y - Xw)^T (y - Xw)
 $$
 
 For optimization problems like this, we can just take the first derivative w.r.t $w$ and set to $0$. 
@@ -121,15 +121,12 @@ Okay, this was all fairly simple. We can also read this as $w = \frac{\text{Cov}
 
 I hope everything seems relatively well-motivated thus far. However, there are certain assumptions that have already been made as well as other issues that have been glossed over. 
 
-Prominently, we defined the loss function to be the mean-squared error $\text{MSE}(y, Xw)$. This is equivalent to minimizing the $L_2$ norm of the residuals. 
+Prominently, we defined the loss function to be the mean-squared error $\text{MSE}(y, Xw)$. This is equivalent to minimizing the $L_2$ norm of the residuals. But *why* use mean-squared error? Why not mean absolute error (MAE) or mean-cubic error?
+
+There are many reasons why MSE is a empirically nice loss function to use. It's differentiable unlike MAE and doesn't place as much weight on outliers as mean errors of higher order terms does. $L_2$ is also a Hilbert space while $L_p$ for $p \geq 1, p \neq 2$ is not (whatever that means). But we still *chose* MSE. These are justifications, not derivations from first principles. 
 
 
-But why mean-squared error? Why not mean absolute error (MAE) or mean-cubic error?
-
-There are many reasons why MSE is a empirically nice loss function to use. It's differentiable unlike MAE and doesn't place as much weight on outliers as mean errors of higher order terms does. Mathematically $L_2$ is also a Hilbert space while $L_p$ for $p \geq 1, p \neq 2$ is not. But we still *chose* MSE. 
-
-
-I find it everything fits much nicer in my head when we don't need to choose an arbitrary loss function but are forced into it by the assumptions we make. We'll now do linear regression probabilistically. 
+I find that everything fits better in my head when we don't choose an arbitrary loss function but are *forced* into that choice from the assumptions we make. My professor once said (paraphrasing) being Bayesian is all about being up-front and honest with our beliefs. We want to honestly represent our assumptions here. A good first step towards that is to do linear regression probabilistically (we'll get to the Bayesian bits eventually). 
 
 # 4. **Maximum Likelihood Estimation**
 ___
@@ -170,7 +167,7 @@ $$
 = \frac{1}{(2 \pi \sigma^2)^\frac{n}{2}} \exp \left \{ - \frac{1}{2 \sigma^2} \sum_{i = 1}^n (y_i - w^T x_i)^2    \right \}
 $$
 
-It's nice to re-write these as inner products. 
+We can re-write these as inner products and save ourselves a lot of mental load. A physics PhD student I was working with actually pointed this out to me and I never looked back (thank you!)
 
 $$
 = \frac{1}{(2 \pi \sigma^2)^\frac{n}{2}} \exp \left \{ - \frac{1}{2 \sigma^2} (y - Xw)^T (y - Xw)    \right \}
@@ -229,10 +226,44 @@ $$
 
 This is a little better - its nice to be able to estimate the variance of the noise as well. 
 
+Math is nice but we need to check whether or not this formula actually works. We implement these basic formulas to generate the following image. 
+    
+    import torch
+    import matplotlib.pyplot as plt
+
+    torch.manual_seed(42)
+
+    x = 30.0 * torch.rand(100)
+    y = 3.0 * x + 40.0 + torch.randn(100) * torch.sqrt(torch.tensor(5.0))
+
+    X = torch.stack([torch.ones(100), x], dim=1)
+
+    w_MLE = torch.linalg.inv(X.T @ X) @ X.T @ y
+    y_pred = X @ w_MLE
+
+    sigma_2_mle = ((y - y_pred).T @ (y - y_pred)) / (100 - 2)
+    slope_str = f"Estimated Slope, Intercept, Noise Variance: {w_MLE[1]:.4f}, {w_MLE[0]:.4f}, {sigma_2_mle:.4f}, True Noise Variance: {5.0:.4f}"
+    # Estimated Slope: 2.9656, Intercept: 40.5160, Noise Variance: 3.3836, True Noise Variance: 5.0000
+
+    plt.title(slope_str, fontsize=10, color="black")
+    plt.plot(x, y, "o", label="Noisy Targets", color="blue")
+    plt.plot(x, y_pred, "-*",label="Predictions", color="red")
+    plt.legend()
+    plt.show()
+    
+![MLE Linear Regression](/images/MLE_linear_regression.png)
+
+However, the MLE estimator of the variance is a biased estimate. **Bessel's correction** divides $(y - Xw)^T (y - Xw)$ by $(n - p)$ where $p$ is the number of **degrees of freedom** - in the above case, $2$ (slope, intercept). The following GIF shows how different estimators of the variance change as the variance increases. While this is of course not always the case, it is the case that the MLE estimator of the variance tends to underestimate the true noise variance. 
+
+![Variance Estimator GIF](/images/lin_reg_mle.gif)
+
+The code for that can be found [here](https://github.com/alexali04/function_fitting/blob/main/func_learning/experiments/bayesian_lr/lin_reg.py).
+
+
 #### 4.1 **Issues with MLE**
 ___
 
-There are several issues with maximum likelihood estimation. But the most glaring one, to me at least, is that it fundamentally answers the wrong question. We don't really care about the probability of observing the data given some parameter setting. We care about the probability of some parameter setting given the data.  
+There are several issues with maximum likelihood estimation. But the most glaring one, to me at least, is that it fundamentally answers the wrong question. Do we *really* care about the probability of the data given some parameter setting? I think the more natural question is the probability of some parameter setting given the data.  
 
 
 # 5. **MAP**
@@ -351,7 +382,7 @@ If we send the prior variance of the weight to $0$, i.e. $\alpha^2 \to 0$, then 
 
 #### 6.1 **Marginal Likelihood**
 
-I want to talk briefly about the marginal likelihood (evidence, partition function) which is the denominator in Bayes rule. By the sum and product rules of probability, we have:
+I want to talk briefly about the marginal likelihood (evidence, partition function, normalizing constant) which is the denominator in Bayes rule. By the sum and product rules of probability, we have:
 
 $$
 p(\mathcal{D}) = \int p(\mathcal{D} \mid w) \ p(w) \ dw
@@ -359,9 +390,9 @@ $$
 
 By marginalizing out $w$ (hence the name **marginal** likelihood), we get a term which tells us the likelihood of the data, conditioned on hyperparameters. This also lets us directly perform hyperparameter optimization. Contrast optimizing this quantity with other hyperparameter optimization techniques like grid search which is exponential in the number of hyperparameter-combinations or random search which is ... random. 
 
-Of course, the downside of this method  (**marginal likelihood optimization** or **Type 2 MLE**) is that it involves an integral which is often intractable. 
+Of course, the downside of this method  (**marginal likelihood optimization** or **Type 2 MLE**) is that it involves an integral which is often intractable. No free lunch strikes again (or does it?...)
 
-We'll use the same prior and noise distribution as before and compute the marginal likelihood. Buckle up.[^2]
+We'll use the same prior and noise distribution as before and compute the marginal likelihood. Buckle up.[^3]
 
 $$
 p(\mathcal{D}) = \int \mathcal{N}(y ; Xw, \sigma^2 I) \ \mathcal{N}(w ; 0, \alpha^2 I) \ dw
@@ -519,7 +550,7 @@ $$
 = \sigma^2 I + \alpha^2 X X^T
 $$
 
-When I derived this for the first time, I was actually surprised by how nice this matrix inverse is.[^3]
+When I derived this for the first time, I was actually surprised by how nice this matrix inverse is.[^4]
 
 Next, let's compute the determinant of this. What I'm hoping for is that the determinant of the covariance matrix will absorb some of the straggling terms in the normalizing coefficient(s). Recall, we have:
 
@@ -564,8 +595,9 @@ $$
 \boxed{\mathcal{D} \sim \mathcal{N}(y; 0, \sigma^2 I + \alpha^2 X X^T)}
 $$
 
+Phew. This evidence quantity is very hard to compute so we try and avoid it best we can. But with nice models like linear-Gaussian, we can do it. 
 
-
+Fun fact: the marginal likelihood is often written with a $Z$ because it stands for *Zustandssumme* or "sum over states" in German. 
 
 
 #### 6.2 **Posterior Distribution**
@@ -584,7 +616,7 @@ $$
 \mu = \Lambda^{-1} \frac{X^T y}{\sigma^2}
 $$
 
-There are very simple ways to derive this from Gaussian identities. But since most of the work is already kind of done for us, let's derive it the "hard" way. 
+There are very simple ways to derive this from Gaussian identities.[^5] But since most of the work is already kind of done for us, let's derive it the "hard" way. 
 
 $$
 p(w \mid \mathcal{D}) = \frac{p(\mathcal{D} \mid w) p(w)}{p(\mathcal{D})}
@@ -665,13 +697,55 @@ $$
 \boxed{w \mid \mathcal{D} \sim \mathcal{N}(\mu, \Lambda^{-1})}
 $$
 
+So we have an estimate for $w$. But how do we actually make point predictions?
+
+#### 6.3 **Predictive Distribution**
+
+The predictive distribution is pretty simple.
+
+$$
+p(y_* \mid X_*, \alpha^2, \sigma^2, \mathcal{D}) = \int p(y_* \mid X_*, w, \sigma^2) p(w \mid \mathcal{D}, \alpha^2) dw
+$$
+
+This is called the **Bayesian Model Average**. It is robust to overfitting and I like it very much. It weights our predictions for different output points $y_*$ by the posterior probability of the coefficient $w$. 
+
+
+# 7. **Conclusion**
+
+This post is nearly *X* words long with a lot of tedious math so if you got through it, I think you should feel proud. We went over linear regression with MSE, MAP, and the BMA which is quite a lot. I hope you learned something too! I would estimate that the knowledge in this post probably took around 9 months to accumulate? Obviously, this metric is bad because I wasn't actively seeking out different perspectives on linear regression. I learned the standard MSE perspective in my first machine learning class and then MAP and the BMA I learned in a Bayesian machine learning class. Very interesting stuff.
+
+The 
+
 
 ## 8. **Footnotes**
 ___
 
 [^1]: All of these examples work with feature transformations on $X$, i.e. replacing $X$ with $\Phi$. Linear regression is super powerful... when it can be made non-linear!
 
-[^2]: Bayesian statistics math is notoriously tedious. There's a much easier way to do this by treating it as a Gaussian Process. I'll derive it quickly here. Suppose $w \sim \mathcal{N}(0, \alpha^2 I), \epsilon_x \sim \mathcal{N}(0, \sigma^2 I)$.  
+[^2]: Linear algebra is your friend. Probably your best friend, actually. It allows a very easy and simple derivation of linear regression.
+
+    We know that $y$ is a vector and the solution $X w$ is the vector which is closest to $y$. In other words, $y$ is an orthogonal projection onto $\text{span}(X)$. This means the error vector $e = y - Xw$ is orthogonal to $X$. So we have:
+
+    $$
+    X^T e = 0
+    $$
+
+    $$
+    X^T (y - Xw) = 0
+    $$
+
+    $$
+    X^T y - X^T X w = 0
+    $$
+
+    $$
+    w = (X^T X)^{-1} X^T y
+    $$
+
+
+
+
+[^3]: Bayesian statistics math is notoriously tedious. There's a much easier way to do this by treating it as a Gaussian Process. I'll derive it quickly here. Suppose $w \sim \mathcal{N}(0, \alpha^2 I), \epsilon_x \sim \mathcal{N}(0, \sigma^2 I)$.  
 
     $$
     y = Xw + \epsilon_x
@@ -713,4 +787,30 @@ ___
     Much easier... : )
 
 
-[^3]: Sometimes it's a lot nicer to use the precision matrix (inverse of covariance matrix). I kind of want to make a post later about what the precision matrix *actually* means - it has something to do with partial correlations. Here, the precision matrix is quite ugly but the covariance matrix is really nice. 
+[^4]: Sometimes it's a lot nicer to use the precision matrix (inverse of covariance matrix). I kind of want to make a post later about what the precision matrix *actually* means - it has something to do with partial correlations. Here, the precision matrix is quite ugly but the covariance matrix is really nice. 
+
+[^5]: Once we know the mean $\mu$ and precision matrix $\Lambda$, we can kind of just infer that $w \mid \mathcal{D} \sim \mathcal{N}(\mu, \Lambda^{-1})$. I made a mistake which confused me for a few days - I thought $p(w \mid \mathcal{D}) = \frac{\mathcal{N}(\mu, \Lambda)}{\mathcal{N}(0, \alpha^2 XX^T + \sigma^2 I)}$. But this isn't true - we need to integrate the unnormalized $p(\mathcal{D} \mid w) p(w)$ to get the marginal likelihood. I guess what I'm trying to get is... Bayes formula never lies?
+
+    With normal-normal models, we can also just take advantage of some nice conditional Gaussian identities. 
+
+    Suppose
+
+    $$
+    p(x) = \mathcal{N}(x ; \mu, \Lambda^{-1})
+    $$
+
+    $$
+    p(y \mid x) = \mathcal{N}(y; Ax + b, L^{-1})
+    $$
+
+    Then,
+
+    $$
+    p(x \mid y) = \mathcal{N}(x; \Sigma(A^T L(y - b) + \Lambda \mu), \Sigma)
+    $$
+
+    $$
+    \Sigma = (\Lambda + A^T L A)^{-1}
+    $$
+
+    This will naturally give us our result. But, it's good for our confidence to do it the hard (redundant, inefficient, not-clever) way at least once. 
