@@ -226,7 +226,7 @@ plt.show()
 
 <p><img src="/images/MLE_linear_regression.png" alt="MLE Linear Regression" /></p>
 
-<p>However, the MLE estimator of the variance is a biased estimate. <strong>Bessel’s correction</strong> divides $(y - Xw)^T (y - Xw)$ by $(n - p)$ where $p$ is the number of <strong>degrees of freedom</strong> - in the above case, $2$ (slope, intercept). The following GIF shows how different estimators of the variance change as the variance increases. While this is of course not always the case, it is the case that the MLE estimator of the variance tends to underestimate the true noise variance.</p>
+<p>However, the MLE of the variance is a biased estimator. <strong>Bessel’s correction</strong> divides $(y - Xw)^T (y - Xw)$ by $(n - p)$ where $p$ is the number of <strong>degrees of freedom</strong> to get a unbiased estimator (in the above case, $p = 2$ - slope, intercept). The following GIF shows how different estimators of the variance change w.r.t. different variances. To be honest, I initially found that the MLE / Bessel estimators were initially overestimating variance but figured out this was because of the random seed. Over different random seeds, the MLE estimator tended to generally underestimate the true noise variance.</p>
 
 <p><img src="/images/lin_reg_mle.gif" alt="Variance Estimator GIF" /></p>
 
@@ -260,7 +260,7 @@ plt.show()
 
 <p>The MAP estimate $w_{\text{MAP}}$ is the parameter setting which maximizes the probability of the parameter given the data. So we want:</p>
 
-\[w_{\text{MAP}} = \argmax_{w} p(w \mid \mathcal{D})\]
+\[w_{\text{MAP}} = \argmax_{w} \ p(w \mid \mathcal{D})\]
 
 <p>Again, we can take the logarithm, so we have:</p>
 

@@ -253,7 +253,7 @@ Math is nice but we need to check whether or not this formula actually works. We
     
 ![MLE Linear Regression](/images/MLE_linear_regression.png)
 
-However, the MLE estimator of the variance is a biased estimate. **Bessel's correction** divides $(y - Xw)^T (y - Xw)$ by $(n - p)$ where $p$ is the number of **degrees of freedom** - in the above case, $2$ (slope, intercept). The following GIF shows how different estimators of the variance change as the variance increases. While this is of course not always the case, it is the case that the MLE estimator of the variance tends to underestimate the true noise variance. 
+However, the MLE of the variance is a biased estimator. **Bessel's correction** divides $(y - Xw)^T (y - Xw)$ by $(n - p)$ where $p$ is the number of **degrees of freedom** to get a unbiased estimator (in the above case, $p = 2$ - slope, intercept). The following GIF shows how different estimators of the variance change w.r.t. different variances. To be honest, I initially found that the MLE / Bessel estimators were initially overestimating variance but figured out this was because of the random seed. Over different random seeds, the MLE estimator tended to generally underestimate the true noise variance. 
 
 ![Variance Estimator GIF](/images/lin_reg_mle.gif)
 
@@ -298,7 +298,7 @@ $$
 The MAP estimate $w_{\text{MAP}}$ is the parameter setting which maximizes the probability of the parameter given the data. So we want:
 
 $$
-w_{\text{MAP}} = \argmax_{w} p(w \mid \mathcal{D})
+w_{\text{MAP}} = \argmax_{w} \ p(w \mid \mathcal{D})
 $$
 
 Again, we can take the logarithm, so we have:
