@@ -7,11 +7,9 @@ categories: jekyll update
 
 # 1. **Introduction**
 ___
-Things are easy when they're simple. As far as curves go, linear curves are about as nice as it gets.
+Linear regression is interpretable and well-studied. I present to you a rough anthology of linear regression.[^1]  By this, I mean several different approaches to linear regression. We'll start off with minimizing MSE and end up with a Bayesian approach with hopefully a (semi-)rigorous approach throughout. Ideally, everything should *feel* motivated. 
 
-I present to you a rough anthology of linear regression.[^1]  By this, I mean several different approaches to linear regression. We'll start off with minimizing MSE and end up with a Bayesian approach with hopefully a (semi-)rigorous approach throughout. Ideally, everything should *feel* motivated. 
-
-There are several computational tricks / alternative derivations which making things shorter and easier. These methods are also cleverer. I'll go through some of them at the end of the article but it's probably valuable to do it the painful way at least once.
+There are several computational tricks / alternative derivations which are shorter and easier. I'll go through some of them at the end of the article but it's probably valuable to do it the painful way at least once.
 
 
 # 2. **Problem Set up**
@@ -99,7 +97,7 @@ $$
 w = (X^T X)^{-1} X^T y
 $$
 
-If a symmetric matrix is non-singular, it's inverse is also symmetric. 
+If a symmetric matrix is non-singular, it's inverse is also symmetric.
 
 #### 3.2 **Gradient is a Column Vector**
 ___
@@ -117,7 +115,7 @@ w = (X^T X)^{-1} X^T y
 $$
 
 
-Okay, this was all fairly simple. We can also read this as $w = \frac{\text{Cov}(X, y)}{\text{Var}(X)}$ to view this from another angle. 
+Okay, this was all fairly simple. We can also read this as $w = \frac{\text{Cov}(X, y)}{\text{Var}(X)}$ to view this from another, probabilistic angle. 
 
 I hope everything seems relatively well-motivated thus far. However, there are certain assumptions that have already been made as well as other issues that have been glossed over. 
 
@@ -357,7 +355,7 @@ $$
 
 In other words, we can recover $L_2$ regularization by assuming Gaussian noise and a Gaussian prior. I like this probabilistic approach much better because it all feels very motivated from our assumptions. 
 
-We can also derive MAP solutions for the noise and weight variances. First, the MAP solution for the noise variance is the same as the MLE solution because it's not affected by the prior. 
+We can also derive MAP solutions for the noise and weight variances. The MAP solution for the noise variance is the same as the MLE solution because it's not affected by the prior. 
 
 $$
  0 = \frac{\partial}{\partial \alpha^2} \left [ 
@@ -373,9 +371,7 @@ $$
 \alpha^2_{\text{MAP}} = \frac{1}{d} w_{\text{MAP}}^T w_{\text{MAP}}
 $$
 
-If we send the prior variance of the weight to $0$, i.e. $\alpha^2 \to 0$, then the regularization coefficient $\lambda$ grows very large so the weights move towards $0$. Similarly, if we send the noise variance $ \sigma^2 \to \infty$, we'll see a similar result.  
-
-
+Let's gut-check. If we send the prior variance of the weight to $0$, i.e. $\alpha^2 \to 0$, then the regularization coefficient $\lambda$ grows very large so the weights move towards $0$. Similarly, if we send the noise variance $ \sigma^2 \to \infty$, we'll see a similar result.  
 
 
 # 6. **Bayesian Linear Regression**
@@ -390,7 +386,7 @@ $$
 
 By marginalizing out $w$ (hence the name **marginal** likelihood), we get a term which tells us the likelihood of the data, conditioned on hyperparameters. This also lets us directly perform hyperparameter optimization. Contrast optimizing this quantity with other hyperparameter optimization techniques like grid search which is exponential in the number of hyperparameter-combinations or random search which is ... random. 
 
-Of course, the downside of this method  (**marginal likelihood optimization** or **Type 2 MLE**) is that it involves an integral which is often intractable. No free lunch strikes again (or does it?...)
+Of course, the downside of this method  (**marginal likelihood optimization** or **Type 2 MLE**) is that it involves an integral which is often intractable. 
 
 We'll use the same prior and noise distribution as before and compute the marginal likelihood. Buckle up.[^3]
 
@@ -432,7 +428,7 @@ $$
 \right \} dw
 $$
 
-We can ascertain the precision matrix $\Lambda = \frac{X^T X}{\sigma^2} + \frac{I}{\alpha^2}$. We want the integrand to be (ignoring the exponential), of the form $(w - \mu)^T \Lambda (w - \mu)$. We have:
+We can infer the precision matrix $\Lambda = \frac{X^T X}{\sigma^2} + \frac{I}{\alpha^2}$. We want the integrand to be (ignoring the exponential), of the form $(w - \mu)^T \Lambda (w - \mu)$. We have:
 
 $$
 (w - \mu)^T \Lambda (w - \mu) = w^T \Lambda w + \mu^T \Lambda \mu - 2 w^T \Lambda \mu
@@ -712,9 +708,9 @@ This is called the **Bayesian Model Average**. It is robust to overfitting and I
 
 # 7. **Conclusion**
 
-This post is nearly *X* words long with a lot of tedious math so if you got through it, I think you should feel proud. We went over linear regression with MSE, MAP, and the BMA which is quite a lot. I hope you learned something too! I would estimate that the knowledge in this post probably took around 9 months to accumulate? Obviously, this metric is bad because I wasn't actively seeking out different perspectives on linear regression. I learned the standard MSE perspective in my first machine learning class and then MAP and the BMA I learned in a Bayesian machine learning class. Very interesting stuff.
+This post is long with a lot of tedious math so if you got through it, I think you should feel proud. We went over linear regression with MSE, MAP, and the BMA which is quite a lot. I hope you learned something too! I would estimate that the knowledge in this post probably took around 9 months to accumulate? Obviously, this is not the best metric for how *long* it takes to learn these different perspectives because I wasn't actively seeking out said perspectivesduring those 9 months. I learned the standard MSE perspective in my first machine learning class and then MAP and the BMA I learned in a Bayesian machine learning class. Very interesting stuff.
 
-The 
+Just a note on marginal likelihood optimization (also called empirical bayes or Type 2 MLE). The marginal likelihood answers a subtly different question than what one might want. I *believe* it relates to the likelihood of the training data under a prior model rather than questions of which hyperparameters generalize best. Still, it's often treated as a proxy to such.
 
 
 ## 8. **Footnotes**

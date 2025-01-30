@@ -4,14 +4,19 @@ title: About
 permalink: /about/
 ---
 
-I'm a undergraduate at NYU, majoring in computer science. I have a particular focus on machine learning. I'm currently interested in interpretability and uncertainty quantification. 
+I'm a undergraduate at NYU, majoring in computer science. I have a particular focus on machine learning. I'm currently interested in interpretability and uncertainty quantification. I'm currently doing research with Professor Andrew G. Wilson. 
 
-Here are some random topics I have vague interest in learning about. These interests have yet to coagulate into any specific experiments...
+Here are some topics I find interesting.
 
-DNN Interpretability:
+Machine Learning Phenomena:
+- Double Descent
+- Benign Overfitting
+- Grokking
+- Neural Collapse
+
+Interpretability:
 - Neural Tangent Kernel
 - Mechanistic Interpetability
-- Neural Collapse
 
 Uncertainty Quantification:
 - Conformal Prediction
