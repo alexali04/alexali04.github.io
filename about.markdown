@@ -4,7 +4,7 @@ title: About
 permalink: /about/
 ---
 
-I'm a undergraduate at NYU, majoring in computer science. I have a particular focus on machine learning. I'm currently interested in interpretability and uncertainty quantification. I'm currently doing research with Professor Andrew G. Wilson. [Check out my resume!]({{ site.url }}{{ site.baseurl }}/assets/resume_alex_ali.pdf)
+I'm a undergraduate at NYU, majoring in computer science. I have a particular focus on machine learning. I'm currently interested in interpretability and uncertainty quantification. I'm currently doing research with Professor Andrew G. Wilson. [Check out my resume!]({{ site.url }}/assets/resume_alex_ali.pdf)
 
 
 Here are some topics I find interesting.
