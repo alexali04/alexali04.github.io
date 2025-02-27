@@ -2,7 +2,6 @@
 layout: post
 title:  "An Anthology for Linear Regresion"
 date:   2024-11-29 00:07:44 -0500
-categories: jekyll update
 ---
 
 # 1. **Introduction**
