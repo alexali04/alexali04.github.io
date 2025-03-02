@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-03-01T22:32:21-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Alex’s Blog</title><subtitle>This is Alex&apos;s blog for machine learning.</subtitle><entry><title type="html">Expectation Maximization and Gaussian Mixture Models</title><link href="http://localhost:4000/2025/02/26/em-gmm.html" rel="alternate" type="text/html" title="Expectation Maximization and Gaussian Mixture Models" /><published>2025-02-26T04:48:38-05:00</published><updated>2025-02-26T04:48:38-05:00</updated><id>http://localhost:4000/2025/02/26/em-gmm</id><content type="html" xml:base="http://localhost:4000/2025/02/26/em-gmm.html"><![CDATA[<h1 id="1-introduction">1. <strong>Introduction</strong></h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-03-02T04:12:13-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Alex’s Blog</title><subtitle>This is Alex&apos;s blog for machine learning.</subtitle><entry><title type="html">Expectation Maximization and Gaussian Mixture Models</title><link href="http://localhost:4000/2025/02/26/em-gmm.html" rel="alternate" type="text/html" title="Expectation Maximization and Gaussian Mixture Models" /><published>2025-02-26T04:48:38-05:00</published><updated>2025-02-26T04:48:38-05:00</updated><id>http://localhost:4000/2025/02/26/em-gmm</id><content type="html" xml:base="http://localhost:4000/2025/02/26/em-gmm.html"><![CDATA[<h1 id="1-introduction">1. <strong>Introduction</strong></h1>
 
 <hr />
 
@@ -68,10 +68,11 @@ expressing the conditional:</p>
 
 <hr />
 
-<p>Now, let’s try MLE on the dataset. We define our parameters
-$<code class="language-plaintext highlighter-rouge">\Theta </code>{=tex}= <code class="language-plaintext highlighter-rouge">\boldsymbol{\mu}</code>{=tex},
-<code class="language-plaintext highlighter-rouge">\boldsymbol{\Sigma}</code>{=tex}, <code class="language-plaintext highlighter-rouge">\boldsymbol{\pi}</code>{=tex} $ - so our
-parameters are the means, covariance matrices, and mixing coefficients
+<p>Now, let’s try MLE on the dataset. We define our parameters:</p>
+
+\[\Theta = \{\mu, \Sigma, \pi\}\]
+
+<p>as the means, covariance matrices, and mixing coefficients
 of the different components.</p>
 
 \[\begin{aligned}
@@ -326,7 +327,7 @@ Prints neg log likelihood at each step
 
 <p><img src="/images/GMM.gif" alt="GMM Fitting Gif" /></p>
 
-<p>Currently, my code for fitting GMMs is maybe 4x slower than sklearn? But they both yield the same results which is pretty cool. In practice, the E-step means computing posterior probabilities while the M-step is a parameter update. There’s some more plotting code which was tough to figure out - it can all be found <a href="https://github.com/alexali04/result_replication/tree/main/EM">here</a>. You can also use the negative log-likelihood as a proxy for how well your clustering algorithm fits the data.</p>
+<p>Currently, my code for fitting GMMs is maybe 4x slower than sklearn? But they both yield the same results which is pretty cool. In practice, the E-step means computing posterior probabilities while the M-step is a parameter update. There’s some more plotting code which was tough to figure out - it can all be found <a href="https://github.com/alexali04/result_replication/tree/main/EM">here</a>. You can also use the negative log-likelihood as a proxy for how well your clustering algorithm fits the data. However, be cautious as likelihood is not necessarily a good proxy for dimensionality reduction tasks or mixture modeling for clustering tasks.</p>
 
 <h1 id="5-generalized-em">5. <strong>Generalized EM</strong></h1>
 
