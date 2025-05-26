@@ -459,7 +459,7 @@ $$
 Let's gut-check. If we send the prior variance of the weight to $0$,
 i.e. $\alpha^2 \to 0$, then the regularization coefficient $\lambda$
 grows very large so the weights move towards $0$. Similarly, if we send
-the noise variance \$ `\sigma`{=tex}\^2 `\to `{=tex}`\infty`{=tex}\$,
+the noise variance $\sigma^2 \to \infty$,
 we'll see a similar result.
 
 # 6. **Bayesian Linear Regression**
