@@ -26,3 +26,7 @@ Uncertainty Quantification:
 Probabilistic Classical Stats:
 - Probabilistic PCA is a generally good method for finding the number of principal components which explain the data. I'm wondering if there's a way to find the optimal number of clusters, i.e. a probabilistic k-means or probabilistic GMMs. 
 
+
+As of 28 May 2025:
+Currently Reading Numerical Linear Algebra (Trefethen & Bau) and Analysis, Measure, and Probability: A visual introduction (Marcus Pivato). 
+
