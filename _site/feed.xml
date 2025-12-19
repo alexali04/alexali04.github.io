@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-05-26T00:12:09-07:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Alex’s Blog</title><subtitle>This is Alex&apos;s blog for machine learning.</subtitle><entry><title type="html">Expectation Maximization and Gaussian Mixture Models</title><link href="http://localhost:4000/2025/02/26/em-gmm.html" rel="alternate" type="text/html" title="Expectation Maximization and Gaussian Mixture Models" /><published>2025-02-26T04:48:38-08:00</published><updated>2025-02-26T04:48:38-08:00</updated><id>http://localhost:4000/2025/02/26/em-gmm</id><content type="html" xml:base="http://localhost:4000/2025/02/26/em-gmm.html"><![CDATA[<h1 id="1-introduction">1. <strong>Introduction</strong></h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-12-18T22:54:09-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Alex’s Blog</title><subtitle>This is Alex&apos;s blog for machine learning.</subtitle><entry><title type="html">Expectation Maximization and Gaussian Mixture Models</title><link href="http://localhost:4000/2025/02/26/em-gmm.html" rel="alternate" type="text/html" title="Expectation Maximization and Gaussian Mixture Models" /><published>2025-02-26T04:48:38-05:00</published><updated>2025-02-26T04:48:38-05:00</updated><id>http://localhost:4000/2025/02/26/em-gmm</id><content type="html" xml:base="http://localhost:4000/2025/02/26/em-gmm.html"><![CDATA[<h1 id="1-introduction">1. <strong>Introduction</strong></h1>
 
 <hr />
 
@@ -484,7 +484,7 @@ Self-pub, eBook, 2020 Chapter 11.
 https://users.cs.duke.edu/ cdr42/teaching.html</p>
 
 <p>Petersen, K. B., &amp; Pedersen, M. S. (2006). The Matrix Cookbook.
-Technical University of Denmark. http://www2.imm.dtu.dk/pubdb/p.php?3274</p>]]></content><author><name></name></author><summary type="html"><![CDATA[1. Introduction]]></summary></entry><entry><title type="html">An Anthology for Linear Regresion</title><link href="http://localhost:4000/2024/11/28/bayesian-linear-regression.html" rel="alternate" type="text/html" title="An Anthology for Linear Regresion" /><published>2024-11-28T21:07:44-08:00</published><updated>2024-11-28T21:07:44-08:00</updated><id>http://localhost:4000/2024/11/28/bayesian-linear-regression</id><content type="html" xml:base="http://localhost:4000/2024/11/28/bayesian-linear-regression.html"><![CDATA[<h1 id="1-introduction">1. <strong>Introduction</strong></h1>
+Technical University of Denmark. http://www2.imm.dtu.dk/pubdb/p.php?3274</p>]]></content><author><name></name></author><summary type="html"><![CDATA[1. Introduction]]></summary></entry><entry><title type="html">An Anthology for Linear Regresion</title><link href="http://localhost:4000/2024/11/29/bayesian-linear-regression.html" rel="alternate" type="text/html" title="An Anthology for Linear Regresion" /><published>2024-11-29T00:07:44-05:00</published><updated>2024-11-29T00:07:44-05:00</updated><id>http://localhost:4000/2024/11/29/bayesian-linear-regression</id><content type="html" xml:base="http://localhost:4000/2024/11/29/bayesian-linear-regression.html"><![CDATA[<h1 id="1-introduction">1. <strong>Introduction</strong></h1>
 
 <hr />
 
@@ -838,7 +838,7 @@ because it’s not affected by the prior.</p>
 i.e. $\alpha^2 \to 0$, then the regularization coefficient $\lambda$
 grows very large so the weights move towards $0$. Similarly, if we send
 the noise variance $\sigma^2 \to \infty$,
-we’ll see a similar result.</p>
+we will see a similar result.</p>
 
 <h1 id="6-bayesian-linear-regression">6. <strong>Bayesian Linear Regression</strong></h1>
 
