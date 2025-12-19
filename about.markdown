@@ -8,4 +8,4 @@ I'm a undergraduate at NYU, majoring in computer science. I have a particular fo
 
 
 Publications:
-- A Unification of Discrete, Gaussian, and Simplicial Diffusion ([arXiv](https://arxiv.org/abs/2512.15923))
+- A Unification of Discrete, Gaussian, and Simplicial Diffusion ([arXiv](https://arxiv.org/abs/2512.15923), [Twitter](https://x.com/AlanNawzadAmin/status/2002031374295793955))
