@@ -951,7 +951,7 @@ treated as a proxy to such.
     partial correlations. Here, the precision matrix is quite ugly but
     the covariance matrix is really nice.
 
-[^5]: Once we know the mean $\mu$ and precision matrix $\Lambda$, we can
+[^5]: Once we know the mean \\(\mu\\) and precision matrix \\(\Lambda\\), we can
     kind of just infer that
     \\(w \mid \mathcal{D} \sim \mathcal{N}(\mu, \Lambda^{-1})\\). I made a
     mistake which confused me for a few days - I thought
