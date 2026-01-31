@@ -2,7 +2,6 @@
 title: An Anthology for Linear Regresion
 date: 2024-11-29
 permalink: /posts/2024/11/bayesian-linear-regression/
-layout: post
 ---
 
 
