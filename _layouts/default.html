@@ -1,44 +1,31 @@
-  <!DOCTYPE html>
-  <html lang="{{ page.lang | default: site.lang | default: "en" }}">
+---
+layout: compress
+---
 
-    {%- include head.html -%}
+{% include base_path %}
 
-    <body>
+<!doctype html>
+<html lang="{{ site.locale | slice: 0,2 }}" class="no-js"{% if site.site_theme == "dark" %} data-theme="dark"{% endif %}>
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+  </head>
 
-      {%- include header.html -%}
+  <body>
 
-      <main class="page-content" aria-label="Content">
-        <div class="wrapper">
-          {{ content }}
-        </div>
-      </main>
+    {% include browser-upgrade.html %}
+    {% include masthead.html %}
 
-      <script>
-        MathJax = {
-          tex: {
-            inlineMath: [['$', '$'], ['\\(', '\\)']],
-            displayMath: [['$$', '$$'], ['\\[', '\\]']],
-            processEscapes: true,
-            tags: "ams",
-            packages: {'[+]': ['ams']},
-            macros: {
-              argmax: "\\mathop{\\rm arg\\,max}",
-              argmin: "\\mathop{\\rm arg\\,min}"
-            }
-          },
-          options: {
-            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-          }
-        };
-      </script>
-      <!-- Load MathJax -->
-      <script type="text/javascript" async
-              src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-      </script>
+    {{ content }}
 
+    <div class="page__footer">
+      <footer>
+        {% include footer/custom.html %}
+        {% include footer.html %}
+      </footer>
+    </div>
 
-      {%- include footer.html -%}
+    {% include scripts.html %}
 
-    </body>
-
-  </html>
+  </body>
+</html>
