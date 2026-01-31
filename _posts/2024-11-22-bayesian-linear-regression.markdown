@@ -356,7 +356,7 @@ The prior represents our beliefs about the data before we have observed
 the data - the posterior represents our updated beliefs after having
 observed the data (likelihood).
 
-So we need to place a prior distribution on $w$. So we can specify:
+So we need to place a prior distribution on \\(w\\). So we can specify:
 
 $$
 w \sim \mathcal{N}(0, \alpha^2 I)
@@ -722,7 +722,7 @@ $$
 Phew. This evidence quantity is very hard to compute so we try and avoid
 it best we can. But with nice models like linear-Gaussian, we can do it.
 
-Fun fact: the marginal likelihood is often written with a $Z$ because it
+Fun fact: the marginal likelihood is often written with a \\(Z\\) because it
 stands for *Zustandssumme* or "sum over states" in German.
 
 ## 6.2 **Posterior Distribution**
@@ -769,7 +769,7 @@ N_u = \frac{\exp \left \{  - \frac{1}{2 \sigma^2} (y - Xw)^T (y - Xw) - \frac{1}
 $$
 
 Now, most of the constants cancel out except for \\((2 \pi)^{\frac{D}{2}}\\)
-and \\(\det(\Lambda)^{\frac{1}{2}\\). Let \\(E(w)\\) be the argument inside the
+and \\(\det(\Lambda)^{\frac{1}{2}}\\). Let \\(E(w)\\) be the argument inside the
 exponential.
 
 $$
@@ -871,7 +871,7 @@ treated as a proxy to such.
 
 ------------------------------------------------------------------------
 
-[^1]: All of these examples work with feature transformations on $X$,
+[^1]: All of these examples work with feature transformations on \\(X\\),
     i.e. replacing \\(X\\) with \\(\Phi\\). Linear regression is super
     powerful... when it can be made non-linear!
 
