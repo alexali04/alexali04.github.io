@@ -8,7 +8,8 @@ author_profile: true
 **Understanding and Relaxing the Limitations of Transformers for Linear Algebra**  
 Potapczynski A\*, **Ali A\***, Wilson A G  
 *ICLR 2026*  
-arXiv coming soon!
+[Paper](https://openreview.net/pdf?id=GBkRMi3qjD) | [Code](https://github.com/alexali04/transformers-nla)
+*Transformers for linear algebra are brittle and don't scale. We investigate failure modes and propose scalable alternatives.*
 
 **A Unification of Discrete, Gaussian, and Simplicial Diffusion**  
 Chandra N A\*, Li Y L\*, Amin A N\*, **Ali A**, Rollins J, Ober S W, Raghu A, Wilson A G  
